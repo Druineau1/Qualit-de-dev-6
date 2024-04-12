@@ -89,7 +89,7 @@ public class IndividuControllerTest {
         // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(expectedTable,actualTable);
     }
-    /*
+    
 
     @Test
     public void testAdd() throws Exception {
@@ -101,7 +101,7 @@ public class IndividuControllerTest {
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(is);
         tester.setDataSet(dataSet);
         tester.onSetup();
-
+        //création d'un individu
         IndividuDto individuAdd = new IndividuDto();
         individuAdd.setFirstName("Louis");
         individuAdd.setLastName("Pinax");
@@ -110,15 +110,14 @@ public class IndividuControllerTest {
         individuAdd.setBirthDate(LocalDate.of(1985, 10, 15));
 
 
-        //ACT
+        //ACT requête pour ajouter un individu
         IndividuDto individu = client.post().uri(path)
                 .body(BodyInserters.fromValue(individuAdd))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(IndividuDto.class)
                 .returnResult().getResponseBody();
-        //ASSERT
-        assertThat(individu).isNotNull();
+        //ASSERT récupération d'une base de données qui contient le résultat souhaité
         InputStream is1 = getClass().getClassLoader()
                 .getResourceAsStream("VerifAdd.xml");
         IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(is1);
@@ -128,8 +127,9 @@ public class IndividuControllerTest {
         IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
                 .createDataSet();
         ITable actualTable = dbDataSet.getTable("individu");
+        // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(replacementTable, actualTable);
-    }
+    }/*
     
     @Test
     public void testModifyFound() throws Exception {
