@@ -1,4 +1,4 @@
-/*package iut.java.spring.tests.functional;
+package iut.java.spring.tests.functional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.dbunit.Assertion.assertEquals;
@@ -38,7 +38,7 @@ public class IndividuControllerTest {
 
     @Test
     public void testGet() throws Exception {
-    	//ARRANGE
+    	//ARRANGE initialisation de la base de données  
         String path = "/individu/{id}";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
@@ -47,13 +47,13 @@ public class IndividuControllerTest {
         tester.setDataSet(dataSet);
         tester.onSetup();
         
-        //ACT
+        //ACT requête http pour récupérer l'individu
         IndividuDto individu = client.get().uri(path, 1L)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(IndividuDto.class)
                 .returnResult().getResponseBody();
-        //ASSERT
+        //ASSERT vérification de l'individu
         assertNotNull(individu.getId());
         assertThat(individu.getFirstName()).isEqualTo("Louis");
         assertThat(individu.getLastName()).isEqualTo("Morison");
@@ -61,10 +61,10 @@ public class IndividuControllerTest {
         assertThat(individu.getHeight()).isEqualTo(178);
         assertThat(individu.getBirthDate()).isEqualTo(LocalDate.of(2006, 5, 3));
 
-    }
+    }/*
     @Test
     public void testRemove() throws Exception {
-        //ARRANGE
+        //ARRANGE initialisation de la base de données 
     	String path = "/individu/{id}";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
@@ -92,7 +92,7 @@ public class IndividuControllerTest {
 
     @Test
     public void testAdd() throws Exception {
-        //ARRANGE
+        //ARRANGE initialisation de la base de données 
         String path = "/individu";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
@@ -132,7 +132,7 @@ public class IndividuControllerTest {
     
     @Test
     public void testModifyFound() throws Exception {
-    	//ARRANGE
+    	//ARRANGE initialisation de la base de données 
         String path = "/individu";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
@@ -168,7 +168,7 @@ public class IndividuControllerTest {
     }
     @Test
     public void testModifyNotFound() throws Exception {
-    	//ARRANGE
+    	//ARRANGE initialisation de la base de données 
         String path = "/individu";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
@@ -202,6 +202,6 @@ public class IndividuControllerTest {
                 .createDataSet();
         ITable actualTable = dbDataSet.getTable("individu");
         assertEquals(expectedTable, actualTable);
-    }
-}*/
+    }*/
+}
 
