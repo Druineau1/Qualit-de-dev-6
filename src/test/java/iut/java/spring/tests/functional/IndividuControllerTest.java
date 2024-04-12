@@ -167,7 +167,7 @@ public class IndividuControllerTest {
         ITable actualTable = dbDataSet.getTable("individu");
         // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(expectedTable, actualTable);
-    }/*
+    }
     
     @Test
     public void testModifyNotFound() throws Exception {
@@ -180,7 +180,7 @@ public class IndividuControllerTest {
         tester.setDataSet(dataSet);
         tester.onSetup();
 
-        
+        //création d'un individu
         IndividuDto individuModNotF = new IndividuDto();
         individuModNotF.setId(11L);
         individuModNotF.setFirstName("Louis");
@@ -190,13 +190,14 @@ public class IndividuControllerTest {
         individuModNotF.setBirthDate(LocalDate.of(1985, 10, 15));
 
 
-        //ACT
+        //ACT requête http pour modifier l'individu avec l'id 11
         client.put().uri(path)
                 .body(BodyInserters.fromValue(individuModNotF))
                 .exchange()
                 .expectStatus().isNotFound();
 
-        //ASSERT
+        //ASSERT récupération d'une base de données qui contient le résultat souhaité
+        //cependant comme l'id de l'individu n'est pas trouvé rien n'est modifié c'est pour cela qu'on recupère la meme 
         InputStream is1 = getClass().getClassLoader()
                 .getResourceAsStream("DruineauThomas.xml");
         IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(is1);
@@ -204,7 +205,8 @@ public class IndividuControllerTest {
         IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
                 .createDataSet();
         ITable actualTable = dbDataSet.getTable("individu");
+        // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(expectedTable, actualTable);
-    }*/
+    }
 }
 
