@@ -129,7 +129,7 @@ public class IndividuControllerTest {
         ITable actualTable = dbDataSet.getTable("individu");
         // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(replacementTable, actualTable);
-    }/*
+    }
     
     @Test
     public void testModifyFound() throws Exception {
@@ -141,7 +141,7 @@ public class IndividuControllerTest {
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(is);
         tester.setDataSet(dataSet);
         tester.onSetup();
-
+        //création d'un individu
         IndividuDto individuMod = new IndividuDto();
         individuMod.setId(10L);
         individuMod.setFirstName("Louis");
@@ -151,13 +151,13 @@ public class IndividuControllerTest {
         individuMod.setBirthDate(LocalDate.of(1985, 10, 15));
 
 
-        //ACT
+        //ACT requête http pour modifier l'individu avec l'id 10
         client.put().uri(path)
                 .body(BodyInserters.fromValue(individuMod))
                 .exchange()
                 .expectStatus().isOk();
 
-        //ASSERT
+        //ASSERT récupération d'une base de données qui contient le résultat souhaité
         InputStream is1 = getClass().getClassLoader()
                 .getResourceAsStream("VerifModify.xml");
         IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(is1);
@@ -165,8 +165,10 @@ public class IndividuControllerTest {
         IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
                 .createDataSet();
         ITable actualTable = dbDataSet.getTable("individu");
+        // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(expectedTable, actualTable);
-    }
+    }/*
+    
     @Test
     public void testModifyNotFound() throws Exception {
     	//ARRANGE initialisation de la base de données 
