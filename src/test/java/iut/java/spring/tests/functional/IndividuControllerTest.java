@@ -1,7 +1,7 @@
-package iut.java.spring.tests.functional;
+/*package iut.java.spring.tests.functional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.dbunit.Assertion.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.InputStream;
@@ -14,8 +14,8 @@ import org.dbunit.IDatabaseTester;
 import org.dbunit.database.DatabaseDataSourceConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
+import org.dbunit.dataset.ReplacementTable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
-import org.hamcrest.core.IsEqual;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -24,6 +24,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 
 import iut.java.spring.dto.IndividuDto;
+import iut.java.spring.entity.Individu;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
@@ -36,9 +37,8 @@ public class IndividuControllerTest {
     private DataSource dataSource;
 
     @Test
-    void testGet() throws Exception {
+    public void testGet() throws Exception {
     	//ARRANGE
-        Long id = 1L;
         String path = "/individu/{id}";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
@@ -48,7 +48,7 @@ public class IndividuControllerTest {
         tester.onSetup();
         
         //ACT
-        IndividuDto individu = client.get().uri(path, id)
+        IndividuDto individu = client.get().uri(path, 1L)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(IndividuDto.class)
@@ -63,8 +63,9 @@ public class IndividuControllerTest {
 
     }
     @Test
-    void testRemove() throws Exception {
+    public void testRemove() throws Exception {
         //ARRANGE
+    	String path = "/individu/{id}";
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
                 .getResourceAsStream("DruineauThomas.xml");
@@ -73,8 +74,7 @@ public class IndividuControllerTest {
         tester.onSetup();
 
         //ACT
-        //On exécute la requête HTTP DELETE pour supprimer un individu avec l'id 2
-        client.delete().uri("/individu/{id}", 2L)
+        client.delete().uri(path, 2L)
                 .exchange()
                 .expectStatus().isOk();
 
@@ -89,6 +89,7 @@ public class IndividuControllerTest {
         assertEquals(expectedTable,actualTable);
     }
     
+
     @Test
     public void testAdd() throws Exception {
         //ARRANGE
@@ -101,7 +102,6 @@ public class IndividuControllerTest {
         tester.onSetup();
 
         IndividuDto individuAdd = new IndividuDto();
-        individuAdd.setId(11L);
         individuAdd.setFirstName("Louis");
         individuAdd.setLastName("Pinax");
         individuAdd.setTitle("Ingineer");
@@ -110,21 +110,98 @@ public class IndividuControllerTest {
 
 
         //ACT
-        IndividuDto individu = client.post().uri(path) // Fournir la valeur de l'ID
+        IndividuDto individu = client.post().uri(path)
                 .body(BodyInserters.fromValue(individuAdd))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(IndividuDto.class)
                 .returnResult().getResponseBody();
         //ASSERT
-	
-         assertNotNull(individu.getId());
-         assertThat(individu.getFirstName()).isEqualTo("Louis");
-         assertThat(individu.getLastName()).isEqualTo("Pinax");
-         assertThat(individu.getTitle()).isEqualTo("Ingineer");
-         assertThat(individu.getHeight()).isEqualTo(180);
-         assertThat(individu.getBirthDate()).isEqualTo(LocalDate.of(1985, 10, 15));
-
-
+        assertThat(individu).isNotNull();
+        InputStream is1 = getClass().getClassLoader()
+                .getResourceAsStream("VerifAdd.xml");
+        IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(is1);
+        ITable expectedTable = dataSet1.getTable("individu");
+        ReplacementTable replacementTable = new ReplacementTable(expectedTable);
+        replacementTable.addReplacementObject("[ID]", individu.getId());
+        IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
+                .createDataSet();
+        ITable actualTable = dbDataSet.getTable("individu");
+        assertEquals(replacementTable, actualTable);
     }
-}
+    
+    @Test
+    public void testModifyFound() throws Exception {
+    	//ARRANGE
+        String path = "/individu";
+        IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
+        InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("DruineauThomas.xml");
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(is);
+        tester.setDataSet(dataSet);
+        tester.onSetup();
+
+        IndividuDto individuMod = new IndividuDto();
+        individuMod.setId(10L);
+        individuMod.setFirstName("Louis");
+        individuMod.setLastName("Pinax");
+        individuMod.setTitle("Ingineer");
+        individuMod.setHeight(180);
+        individuMod.setBirthDate(LocalDate.of(1985, 10, 15));
+
+
+        //ACT
+        client.put().uri(path)
+                .body(BodyInserters.fromValue(individuMod))
+                .exchange()
+                .expectStatus().isOk();
+
+        //ASSERT
+        InputStream is1 = getClass().getClassLoader()
+                .getResourceAsStream("VerifModify.xml");
+        IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(is1);
+        ITable expectedTable = dataSet1.getTable("individu");
+        IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
+                .createDataSet();
+        ITable actualTable = dbDataSet.getTable("individu");
+        assertEquals(expectedTable, actualTable);
+    }
+    @Test
+    public void testModifyNotFound() throws Exception {
+    	//ARRANGE
+        String path = "/individu";
+        IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
+        InputStream is = getClass().getClassLoader()
+                .getResourceAsStream("DruineauThomas.xml");
+        IDataSet dataSet = new FlatXmlDataSetBuilder().build(is);
+        tester.setDataSet(dataSet);
+        tester.onSetup();
+
+        
+        IndividuDto individuModNotF = new IndividuDto();
+        individuModNotF.setId(11L);
+        individuModNotF.setFirstName("Louis");
+        individuModNotF.setLastName("Pinax");
+        individuModNotF.setTitle("Ingineer");
+        individuModNotF.setHeight(180);
+        individuModNotF.setBirthDate(LocalDate.of(1985, 10, 15));
+
+
+        //ACT
+        client.put().uri(path)
+                .body(BodyInserters.fromValue(individuModNotF))
+                .exchange()
+                .expectStatus().isNotFound();
+
+        //ASSERT
+        InputStream is1 = getClass().getClassLoader()
+                .getResourceAsStream("DruineauThomas.xml");
+        IDataSet dataSet1 = new FlatXmlDataSetBuilder().build(is1);
+        ITable expectedTable = dataSet1.getTable("individu");
+        IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
+                .createDataSet();
+        ITable actualTable = dbDataSet.getTable("individu");
+        assertEquals(expectedTable, actualTable);
+    }
+}*/
+

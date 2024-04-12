@@ -28,13 +28,15 @@ public class IndividuServiceTest {
     private DataSource dataSource;
 
     @Test
-    void testGetList() throws Exception {
+    public void testGetList() throws Exception {
+    	//ARRANGE initialisation de la base de données 
         IDatabaseTester tester = new DataSourceDatabaseTester(dataSource);
         InputStream is = getClass().getClassLoader()
                 .getResourceAsStream("DruineauThomas.xml");
         IDataSet dataSet = new FlatXmlDataSetBuilder().build(is);
         tester.setDataSet(dataSet);
         tester.onSetup();
+        //création de la liste des prenoms attendus
         List<String> prenomsAttendus = List.of(
                 "Louis",
                 "Anthia",
@@ -47,9 +49,9 @@ public class IndividuServiceTest {
                 "Rafaellle",
                 "Maude"
         );
-
+        //ACT récupération de la liste
         List<IndividuDto> individus = service.getList();
-
+        //ASSERT vérification que le fichier xml contient bien les prenoms attendus
         assertThat(individus).extracting(IndividuDto::getFirstName).containsAll(prenomsAttendus);
     }
 }

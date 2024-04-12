@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dataset>
 	<individu id="1" first_name="Louis" last_name="Morison" title="Honorable" height="178" birth_date="2006-05-03"/>
+	<individu id="2" first_name="Anthia" last_name="Kears" title="Honorable" height="183"/>
 	<individu id="3" first_name="Sondra" last_name="Spatarul" title="Mr" height="183" birth_date="1988-08-05"/>
 	<individu id="4" first_name="Elie" last_name="Rieflin" title="Honorable" height="161" birth_date="1982-02-04"/>
 	<individu id="5" first_name="Madlin" last_name="Andrini" title="Mr" height="170" birth_date="1990-06-15"/>
@@ -9,4 +10,5 @@
 	<individu id="8" first_name="Herman" last_name="Broomer" title="Mrs" height="186" />
 	<individu id="9" first_name="Rafaellle" last_name="Priddie" title="Mrs" height="160" birth_date="1990-10-21"/>
 	<individu id="10" first_name="Maude" last_name="Geertsen" title="Rev" height="160" birth_date="1974-04-26"/>
+	<individu id="[ID]" first_name="Louis" last_name="Pinax" title="Ingineer" height="180" birth_date="1985-10-15"/>
 </dataset>
