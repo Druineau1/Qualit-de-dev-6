@@ -61,7 +61,7 @@ public class IndividuControllerTest {
         assertThat(individu.getHeight()).isEqualTo(178);
         assertThat(individu.getBirthDate()).isEqualTo(LocalDate.of(2006, 5, 3));
 
-    }/*
+    }
     @Test
     public void testRemove() throws Exception {
         //ARRANGE initialisation de la base de données 
@@ -73,12 +73,12 @@ public class IndividuControllerTest {
         tester.setDataSet(dataSet);
         tester.onSetup();
 
-        //ACT
+        //ACT requête http pour supprimer l'individu
         client.delete().uri(path, 2L)
                 .exchange()
                 .expectStatus().isOk();
 
-        //ASSERT
+        //ASSERT récupération d'une base de données qui contient le résultat souhaité
         InputStream ist = getClass().getClassLoader()
                 .getResourceAsStream("VerifRemove.xml");
         IDataSet dataSett = new FlatXmlDataSetBuilder().build(ist);
@@ -86,9 +86,10 @@ public class IndividuControllerTest {
         IDataSet dbDataSet = new DatabaseDataSourceConnection(dataSource)
                 .createDataSet();
         ITable actualTable = dbDataSet.getTable("individu");
+        // comparaison entre la base de données ayant subit la reqête et celle de vérification
         assertEquals(expectedTable,actualTable);
     }
-    
+    /*
 
     @Test
     public void testAdd() throws Exception {
